@@ -17,7 +17,7 @@ const client = new Client({
   host: process.env.DB1_HOST,
   database: process.env.DB1_DATABASE,
   password: process.env.DB1_PASSWORD,
-  port: process.env.DB_PORT,
+  port: process.env.PORT,
 });
 
 client.connect(function (err) {
