@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post</title>
+  </head>
+  <body>
+    <div id="post-container"></div>
+    <script>
+      fetch("/post_takens/:id")
+        .then((response) => response.json())
+        .then((posts) => {
+          // Get a reference to the posts container element
+          const postsContainer = document.getElementById("post-container");
+
+          // Create HTML elements to display each post
+          posts.forEach((post) => {
+            const postElement = document.createElement("div");
+            postElement.className = "postkind";
+
+            const titleElement = document.createElement("h2");
+            titleElement.textContent = post.question.title;
+            postElement.appendChild(titleElement);
+
+            postsContainer.appendChild(postElement);
+          });
+        });
+    </script>
+  </body>
+</html>

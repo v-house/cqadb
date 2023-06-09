@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVA | Profile</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f3f7f9;
+        font-family: sans-serif;
+      }
+      header {
+        width: 100%;
+        border: 1px solid #ddd;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        background-color: #0077b6;
+        color: #fff;
+      }
+      header h1 {
+        margin: 0;
+      }
+      header div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 960px;
+        width: 100%;
+      }
+      header a button {
+        background-color: #fff;
+        color: #0077b6;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      header a button:hover {
+        background-color: #0077b6;
+        color: #fff;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 960px;
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
+      label {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      input[type="text"] {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+      }
+      #autocomplete-list {
+        margin-top: 20px;
+        max-width: 960px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .post {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 960px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+      .post h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 24px;
+        color: #0077b6;
+      }
+      .post h4 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 16;
+      }
+      .post button {
+        width: 50%;
+        margin: 3px auto;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <header>
+        <div>
+          <h1>SVAs Question Platform</h1>
+          <a href="/posts"><button>Back to Home</button></a>
+          <a href="/start_a_discussion"><button>Post a Question</button></a>
+          <a href="/logout"><button>Logout</button></a>
+        </div>
+      </header>
+      <div id="autocomplete-list"></div>
+      <form id="formto" action="/update_posts/:id" method="post">
+        <input
+          type="text"
+          id="titlechor"
+          name="title"
+          placeholder="Title of your question"
+        />
+        <input
+          type="text"
+          id="bodychor"
+          name="bhead"
+          placeholder="Body of the question"
+        />
+        <input type="text" id="search" name="search" disabled />
+        <label for="search">Search:</label>
+        <input
+          type="text"
+          id="taglist"
+          name="Taglist"
+          placeholder="Enter your tags one by one"
+        />
+        <div id="autocomplete-list"></div>
+      </form>
+      <div id="posts-container"></div>
+    </div>
+
+    <script>
+      const FormNo = document.getElementById("formto");
+      const searchbarT = document.getElementById("search");
+      const titlebarT = document.getElementById("titlechor");
+      const bodybarT = document.getElementById("bodychor");
+
+      fetch("/profilequestions")
+        .then((response) => response.json())
+        .then((posts) => {
+          // Get a reference to the posts container element
+          const postsContainer = document.getElementById("posts-container");
+
+          // Create HTML elements to display each post
+          posts.forEach((post) => {
+            const postElement = document.createElement("div");
+            postElement.className = "post";
+
+            const tagElement = document.createElement("h4");
+            tagElement.textContent = "Tags: " + post.tags;
+            postElement.appendChild(tagElement);
+
+            // const tagInput = document.createElement("input");
+            // tagInput.setAttribute("type", "text");
+            // tagInput.setAttribute("name", "search");
+            // tagInput.setAttribute("value", post.tags);
+            // postElement.appendChild(tagInput);
+
+            const titleElement = document.createElement("h2");
+            titleElement.textContent = post.title;
+            postElement.appendChild(titleElement);
+
+            // const titleInput = document.createElement("input");
+            // titleInput.setAttribute("type", "text");
+            // titleInput.setAttribute("name", "title");
+            // titleInput.setAttribute("value", post.title);
+            // postElement.appendChild(titleInput);
+
+            const viewElement = document.createElement("h5");
+            viewElement.textContent =
+              "Viewed by " + post.view_count + " people";
+            postElement.append(viewElement);
+
+            const moveElement = document.createElement("button");
+            moveElement.className = "each-post-btn";
+            moveElement.textContent = "View responses";
+            moveElement.addEventListener("click", () => {
+              const postID = post.id;
+              // window.open("/posts/${post.id}", "_blank");
+              window.location.href = "/post_takens/" + postID;
+            });
+
+            const udtElement = document.createElement("button");
+            udtElement.className = "each-post-update-btn";
+            udtElement.textContent = "Update the question";
+            udtElement.addEventListener("click", () => {
+              if (confirm("Updating the post!")) {
+                const newTitle = "[Updated] " + titlebarT.value;
+                const newTags = "Updated, " + searchbarT.value;
+                const newBody = "[Updated] " + bodybarT.value;
+                const postID = post.id;
+                // Send a PUT request to update the post title
+                fetch(`/update_posts/${postID}`, {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    title: newTitle,
+                    search: newTags,
+                    bhead: newBody,
+                  }),
+                })
+                  .then((response) => response.json())
+                  .then((updatedPost) => {
+                    // Update the post title element with the new title
+                    titleElement.textContent = updatedPost.title;
+                  })
+                  .catch((error) => {
+                    console.error("Error updating post title:", error);
+                  });
+              }
+            });
+
+            postElement.append(moveElement);
+            postElement.append(udtElement);
+
+            const deleteElement = document.createElement("button");
+            deleteElement.className = "each-d-post-btn";
+            deleteElement.textContent = "Delete post";
+            deleteElement.addEventListener("click", () => {
+              if (confirm("You are deleting a post!, please be sure.")) {
+                const postID = post.id;
+                // window.open("/posts/${post.id}", "_blank");
+                window.location.href = "/delete_post/" + postID;
+              }
+            });
+            postElement.append(deleteElement);
+
+            const contentElement = document.createElement("p");
+            contentElement.textContent = post.body;
+            postElement.appendChild(contentElement);
+
+            // const bodyInput = document.createElement("input");
+            // bodyInput.setAttribute("type", "text");
+            // bodyInput.setAttribute("name", "bhead");
+            // bodyInput.setAttribute("value", post.body);
+            // postElement.appendChild(bodyInput);
+
+            postsContainer.appendChild(postElement);
+          });
+        });
+
+      function autocomplete() {
+        const searchValue = document.getElementById("taglist").value;
+        const searchValue1 = document.getElementById("search").value;
+
+        fetch(`/autocomplete?search=${searchValue}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const suggestions = data.suggestions;
+            const autocompleteList = document.createElement("ul");
+            suggestions.forEach((suggestion) => {
+              const listItem = document.createElement("li");
+              const button = document.createElement("button");
+              button.textContent = suggestion;
+              button.addEventListener("click", () => {
+                document.getElementById("search").value =
+                  searchValue1 + suggestion + ", ";
+                autocompleteList.innerHTML = "";
+                document.getElementById("taglist").value = "";
+              });
+              listItem.appendChild(button);
+              autocompleteList.appendChild(listItem);
+            });
+            document.getElementById("autocomplete-list").innerHTML = "";
+            document
+              .getElementById("autocomplete-list")
+              .appendChild(autocompleteList);
+          });
+      }
+
+      document.getElementById("taglist").addEventListener("input", () => {
+        autocomplete();
+      });
+    </script>
+  </body>
+</html>

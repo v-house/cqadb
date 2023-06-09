@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update</title>
+  </head>
+  <body>
+    <h1>Update your Question</h1>
+    <form action="/profile" method="post">
+      <input type="text" name="title" placeholder="Title of your question" />
+      <input type="text" name="bhead" placeholder="Body of the question" />
+      <label for="search">Search:</label>
+      <input type="text" id="search" name="search" />
+      <div id="autocomplete-list"></div>
+      <button type="submit">Post</button>
+    </form>
+  </body>
+  <script>
+    document.querySelector("#post-title").value = previousValues.title;
+    document.querySelector("#post-bhead").value = previousValues.body;
+
+    function autocomplete() {
+      const searchValue = document.getElementById("search").value;
+      fetch(`/autocomplete?search=${searchValue}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const suggestions = data.suggestions;
+          const autocompleteList = document.createElement("ul");
+          suggestions.forEach((suggestion) => {
+            const listItem = document.createElement("li");
+            const button = document.createElement("button");
+            button.textContent = suggestion;
+            button.addEventListener("click", () => {
+              document.getElementById("search").value = suggestion;
+              autocompleteList.innerHTML = "";
+            });
+            listItem.appendChild(button);
+            autocompleteList.appendChild(listItem);
+          });
+          document.getElementById("autocomplete-list").innerHTML = "";
+          document
+            .getElementById("autocomplete-list")
+            .appendChild(autocompleteList);
+        });
+    }
+
+    document.getElementById("search").addEventListener("input", () => {
+      autocomplete();
+    });
+  </script>
+</html>

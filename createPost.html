@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post Question</title>
+  </head>
+  <style>
+    body {
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f3f7f9;
+    }
+
+    form {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    button {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      background-color: #4caf50;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+    }
+
+    #autocomplete-list {
+      position: absolute;
+      background-color: #f1f1f1;
+      z-index: 1;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 100px;
+      overflow: auto;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #autocomplete-list li {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    #autocomplete-list li:hover {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <form action="/start_a_discussion" method="post">
+    <h1>Post a Question</h1>
+    <input type="text" name="title" placeholder="Title of your question" />
+    <input type="text" name="bhead" placeholder="Body of the question" />
+    <label for="search">Search:</label>
+    <div style="position: relative">
+      <input type="text" id="search" name="search" />
+      <div id="autocomplete-list"></div>
+    </div>
+    <input type="text" id="taglist" name="Taglist" placeholder="Tags" />
+    <button type="submit">Post</button>
+  </form>
+  </body>
+  <script>
+    function autocomplete() {
+      const searchValue = document.getElementById("taglist").value;
+      const searchValue1 = document.getElementById("search").value;
+
+      fetch(`/autocomplete?search=${searchValue}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const suggestions = data.suggestions;
+          const autocompleteList = document.createElement("ul");
+          suggestions.forEach((suggestion) => {
+            const listItem = document.createElement("li");
+            const button = document.createElement("button");
+            button.textContent = suggestion;
+            button.addEventListener("click", () => {
+              document.getElementById("search").value =
+                searchValue1 + suggestion + ", ";
+              autocompleteList.innerHTML = "";
+              document.getElementById("taglist").value = "";
+            });
+            listItem.appendChild(button);
+            autocompleteList.appendChild(listItem);
+          });
+          document.getElementById("autocomplete-list").innerHTML = "";
+          document
+            .getElementById("autocomplete-list")
+            .appendChild(autocompleteList);
+        });
+    }
+
+    document.getElementById("taglist").addEventListener("input", () => {
+      autocomplete();
+    });
+  </script>
+</html>

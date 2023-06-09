@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Create an account</title>
+
+    <style>
+      :root {
+        --primary-color: #10375c;
+        --secondary-color: #5cc0f6;
+        --text-color: #333333;
+      }
+
+      body {
+        background-color: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .contained {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--secondary-color);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .login {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 20px;
+      }
+
+      .login input[type="text"],
+      .login button {
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+
+      .login button[type="submit"],
+      button {
+        background-color: var(--text-color);
+        color: var(--secondary-color);
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      .login button[type="submit"]:hover,
+      button:hover {
+        background-color: var(--primary-color);
+      }
+
+      .btnl {
+        background-color: var(--text-color);
+        color: var(--secondary-color);
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="contained">
+      <form class="login" action="/create_account" method="post">
+        <h1>Create an Account</h1>
+        <input type="text" name="fullname" placeholder="Fullname" />
+        <input type="text" name="username" placeholder="Username" />
+        <button type="submit">Submit</button>
+      </form>
+      <a href="/login" class="btnl"><button>Login</button></a>
+    </div>
+  </body>
+</html>

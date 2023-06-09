@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search | All</title>
+  </head>
+  <style>
+    /* Reset default browser styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .headtothis {
+      text-align: center;
+      margin: 1em 1em;
+    }
+
+    /* Set background color and font for body */
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Center the search container */
+    form {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    /* Style the search input */
+    input[type="text"] {
+      border: none;
+      border-radius: 5px;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      font-size: 18px;
+      padding: 10px;
+      width: 300px;
+    }
+
+    /* Style the search button */
+    button[type="submit"] {
+      background-color: #4caf50;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 10px;
+      padding: 10px 20px;
+    }
+
+    /* Style the post container */
+    #posts-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    /* Style the individual posts */
+    .post {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      padding: 20px;
+      width: 400px;
+    }
+
+    /* Style the post tags */
+    .post h4 {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* Style the post title */
+    .post h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    /* Style the post views */
+    .post h5 {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* Style the view responses button */
+    .each-post-btn {
+      background-color: #4caf50;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      padding: 10px 20px;
+    }
+  </style>
+  <body>
+    <h1 class="headtothis">Search across by question, tags or user-ids</h1>
+    <form>
+      <input type="text" id="search-input" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div id="posts-container"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      const postsContainer = document.getElementById("posts-container");
+
+      $(document).ready(function () {
+        $("form").submit(function (event) {
+          event.preventDefault();
+          var searchQuery = $("#search-input").val();
+          $.ajax({
+            url: "/searchall",
+            type: "POST",
+            data: { searchQuery: searchQuery },
+            success: function (data) {
+              postsContainer.innerHTML = "";
+              data.forEach(function (row) {
+                const postElement = document.createElement("div");
+                postElement.className = "post";
+
+                const tagElement = document.createElement("h4");
+                tagElement.textContent = "Tags: " + row.tags;
+                postElement.appendChild(tagElement);
+
+                const titleElement = document.createElement("h2");
+                titleElement.textContent = row.title;
+                postElement.appendChild(titleElement);
+
+                const viewElement = document.createElement("h5");
+                viewElement.textContent =
+                  "Viewed by " + row.view_count + " people";
+                postElement.append(viewElement);
+
+                const moveElement = document.createElement("button");
+                moveElement.className = "each-post-btn";
+                moveElement.textContent = "View Responses";
+                moveElement.addEventListener("click", () => {
+                  window.location.href = "/post_takens/" + row.id;
+                });
+                postElement.append(moveElement);
+
+                const contentElement = document.createElement("p");
+                contentElement.textContent = row.body;
+                postElement.appendChild(contentElement);
+
+                postsContainer.appendChild(postElement);
+              });
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

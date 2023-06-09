@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search | User id</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 30px;
+      width: 100%;
+      align-items: center;
+    }
+
+    label {
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 2px 2px;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+    }
+
+    #sortbyvotes {
+      margin-left: 10px;
+    }
+
+    #autocomplete-list {
+      position: absolute;
+      background-color: #3e8e41;
+      z-index: 1;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-radius: 5px;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    #autocomplete-list ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    #autocomplete-list li button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+    }
+
+    #autocomplete-list li button:hover {
+      background-color: blue;
+    }
+
+    #posts-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .post {
+      width: calc(30% - 20px);
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .post h2 {
+      margin-top: 0;
+    }
+
+    .post h3,
+    .post h4,
+    .post h5 {
+      margin: 0;
+    }
+
+    .each-post-btn {
+      margin-top: 10px;
+    }
+  </style>
+  <body>
+    <h1>Search by user-id</h1>
+    <form>
+      <input type="text" id="search-input" name="search" disabled />
+      <label for="search">Search:</label>
+      <input type="text" id="taglist" name="Taglist" />
+      <div id="autocomplete-list"></div>
+      <button type="submit" onclick="sortdates()">Search by recents</button>
+      <button id="sortbyvotes" onclick="sortVotes()">
+        Search by top votes
+      </button>
+    </form>
+    <div id="posts-container"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      const postsContainer = document.getElementById("posts-container");
+      let presence = 1;
+
+      const sortvot = document.getElementById("sortbyvotes");
+
+      function sortVotes() {
+        presence = 0;
+        var searchQuery = $("#search-input").val();
+        const querysearches = searchQuery;
+        $.ajax({
+          url: "/searchnamevotes",
+          type: "POST",
+          data: { searchQuery: querysearches },
+          success: function (data) {
+            postsContainer.innerHTML = "";
+            data.forEach(function (row) {
+              const postElement = document.createElement("div");
+              postElement.className = "post";
+
+              const tnaElement = document.createElement("h3");
+              tnaElement.textContent =
+                "Posted by: " +
+                row.owner_display_name +
+                " with the following id: " +
+                row.owner_user_id;
+              postElement.appendChild(tnaElement);
+
+              const tagElement = document.createElement("h4");
+              tagElement.textContent = "Tags: " + row.tags;
+              postElement.appendChild(tagElement);
+
+              const titleElement = document.createElement("h2");
+              titleElement.textContent = row.title;
+              postElement.appendChild(titleElement);
+
+              const viewElement = document.createElement("h5");
+              viewElement.textContent =
+                "Viewed by " + row.view_count + " people";
+              postElement.append(viewElement);
+
+              const moveElement = document.createElement("button");
+              moveElement.className = "each-post-btn";
+              moveElement.textContent = "View Responses";
+              moveElement.addEventListener("click", () => {
+                window.location.href = "/post_takens/" + row.id;
+              });
+              postElement.append(moveElement);
+
+              const contentElement = document.createElement("p");
+              contentElement.textContent = row.body;
+              postElement.appendChild(contentElement);
+
+              postsContainer.appendChild(postElement);
+            });
+          },
+        });
+      }
+
+      $(document).ready(function () {
+        if (presence === 1) {
+          $("form").submit(function (event) {
+            event.preventDefault();
+            var searchQuery = $("#search-input").val();
+            $.ajax({
+              url: "/searchname",
+              type: "POST",
+              data: { searchQuery: searchQuery },
+              success: function (data) {
+                // postsContainer.innerHTML = "";
+                data.forEach(function (row) {
+                  const postElement = document.createElement("div");
+                  postElement.className = "post";
+
+                  const tnaElement = document.createElement("h3");
+                  tnaElement.textContent =
+                    "Posted by: " +
+                    row.owner_display_name +
+                    " with the following id: " +
+                    row.owner_user_id;
+                  postElement.appendChild(tnaElement);
+
+                  const tagElement = document.createElement("h4");
+                  tagElement.textContent = "Tags: " + row.tags;
+                  postElement.appendChild(tagElement);
+
+                  const titleElement = document.createElement("h2");
+                  titleElement.textContent = row.title;
+                  postElement.appendChild(titleElement);
+
+                  const viewElement = document.createElement("h5");
+                  viewElement.textContent =
+                    "Viewed by " + row.view_count + " people";
+                  postElement.append(viewElement);
+
+                  const moveElement = document.createElement("button");
+                  moveElement.className = "each-post-btn";
+                  moveElement.textContent = "View Responses";
+                  moveElement.addEventListener("click", () => {
+                    window.location.href = "/post_takens/" + row.id;
+                  });
+                  postElement.append(moveElement);
+
+                  const contentElement = document.createElement("p");
+                  contentElement.textContent = row.body;
+                  postElement.appendChild(contentElement);
+
+                  postsContainer.appendChild(postElement);
+                });
+              },
+            });
+          });
+        } else {
+          return;
+        }
+      });
+
+      function autocomplete() {
+        const searchValue = document.getElementById("taglist").value;
+        const searchValue1 = document.getElementById("search-input").value;
+
+        fetch(`/autocompleten?search=${searchValue}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const suggestions = data.suggestions;
+            const autocompleteList = document.createElement("ul");
+            suggestions.forEach((suggestion) => {
+              const listItem = document.createElement("li");
+              const button = document.createElement("button");
+              button.textContent = suggestion;
+              button.addEventListener("click", () => {
+                document.getElementById("search-input").value = suggestion;
+                autocompleteList.innerHTML = "";
+                document.getElementById("taglist").value = "";
+              });
+              listItem.appendChild(button);
+              autocompleteList.appendChild(listItem);
+            });
+            document.getElementById("autocomplete-list").innerHTML = "";
+            document
+              .getElementById("autocomplete-list")
+              .appendChild(autocompleteList);
+          });
+      }
+
+      document.getElementById("taglist").addEventListener("input", () => {
+        autocomplete();
+      });
+    </script>
+  </body>
+</html>
