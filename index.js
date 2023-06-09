@@ -30,7 +30,7 @@ app.listen(3000, () => {
 });
 
 app.get("/login", (req, res) => {
-  res.sendFile(`${__dirname}/loginUser.html`);
+  res.sendFile(`${__dirname}/index.html`);
 });
 
 app.post("/login", (req, res) => {
