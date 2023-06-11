@@ -4,7 +4,8 @@
   "description": "Basic website of question-answer among the society",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "K Vivek Kumar",
   "license": "ISC",
