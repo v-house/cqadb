@@ -24,7 +24,9 @@ client.connect(function () {
   console.log("Connected!");
 });
 
-app.listen(3000, () => {
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
   console.log("Server listening on port 3000.");
 });
 
