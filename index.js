@@ -20,8 +20,7 @@ const client = new Client({
   port: process.env.PORT,
 });
 
-client.connect(function (err) {
-  if (err) throw err;
+client.connect(function () {
   console.log("Connected!");
 });
 
