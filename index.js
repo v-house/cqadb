@@ -13,22 +13,22 @@ app.use(cookies());
 app.use(express.json());
 
 const client = new Client({
-  user: process.env.DB1_USER,
-  host: process.env.DB1_HOST,
-  database: process.env.DB1_DATABASE,
-  password: process.env.DB1_PASSWORD,
-  port: process.env.PORT,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 client.connect(function () {
-  console.log("Connected!");
+  console.log("Connected to PostgreSQL database!");
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server listening on port 3000.");
+  console.log(`Server listening on port ${PORT}.`);
 });
+
 
 app.get("/login", (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
